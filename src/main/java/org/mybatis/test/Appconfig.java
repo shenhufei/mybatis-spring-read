@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component;
 
 @ComponentScan("org.mybatis.test")
 // 已经加了扫描 mapper层接口的 路径
-@MapperScan("org.mybatis.mapper.test")
+@MapperScan("org.mybatis.test.mapper")
 @Configuration
 public class Appconfig {
 	
 	 
-		@Bean
+		@Bean("name")
 		public SqlSessionFactoryBean   sqlSessionFactoryBean(DataSource dataSource){
 			SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
 			bean.setDataSource(dataSource);

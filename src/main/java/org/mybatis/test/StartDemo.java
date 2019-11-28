@@ -11,8 +11,11 @@ public class StartDemo {
 	AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
 	ac.register(Appconfig.class);
 	ac.refresh();
-	//ConfigurableListableBeanFactory beanFactory = ac.getBeanFactory();
-	Object bean2 = ac.getBean(UserMapper.class);
+	//ConfigurableListableBeanFactory beanFactory = ac.getBeanFactory(); SqlSessionFactoryBean
+	Object bean2 = ac.getBean("name");
+	UserMapper  userMapper  = ac.getBean(UserMapper.class);
+	System.out.println(bean2);
+	System.out.println(userMapper);
 	
 	}
 
