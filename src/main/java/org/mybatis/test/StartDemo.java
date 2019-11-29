@@ -1,9 +1,7 @@
 package org.mybatis.test;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.mybatis.test.mapper.UserMapper;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-@MapperScan("org.mybatis.test.mapper")
 public class StartDemo {
 
 	public static void main(String[] args) {

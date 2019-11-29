@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.mybatis.logging.Logger;
+import org.mybatis.logging.LoggerFactory;
 import org.mybatis.spring.mapper.ClassPathMapperScanner;
 import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
@@ -36,6 +38,8 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
+import com.alibaba.fastjson.JSONArray;
+
 /**
  * A {@link ImportBeanDefinitionRegistrar} to allow annotation configuration of MyBatis mapper scanning. Using
  * an @Enable annotation allows beans to be registered via @Component configuration, whereas implementing
@@ -50,7 +54,8 @@ import org.springframework.util.StringUtils;
  * @since 1.2.0
  */
 public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware {
-
+	 private static final Logger logger = LoggerFactory.getLogger(MapperScannerRegistrar.class);
+	    
   /**
    * {@inheritDoc}
    * 
@@ -62,14 +67,23 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
     // NOP
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
+
+/**
+ * spring的后置处理器，调用这个方法，ImportBeanDefinitionRegistrar 接口的实现类；
+ * 来把mybatis的框架的对象生命周期进行管理
+ * 把mybatis的对象组装成 BeanDefinition 对象，存储在BeanDefinitionMap集合中
+ * @date 2019年11月29日  
+ * @version 1.0  
+ * @author shenhufei
+ */
+@Override
   public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-    AnnotationAttributes mapperScanAttrs = AnnotationAttributes
+    //拿到各种方式将对象给spring管理的配置项，
+	AnnotationAttributes mapperScanAttrs = AnnotationAttributes
         .fromMap(importingClassMetadata.getAnnotationAttributes(MapperScan.class.getName()));
+	logger.error("mapperScanAttrs对象数据是："+JSONArray.toJSONString(mapperScanAttrs));
     if (mapperScanAttrs != null) {
+    //再根据具体的配置项，去进行存储在BeanDefinitionMap集合中的操作
       registerBeanDefinitions(mapperScanAttrs, registry, generateBaseBeanName(importingClassMetadata, 0));
     }
   }
@@ -131,7 +145,8 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
   }
 
   private static String generateBaseBeanName(AnnotationMetadata importingClassMetadata, int index) {
-    return importingClassMetadata.getClassName() + "#" + MapperScannerRegistrar.class.getSimpleName() + "#" + index;
+	  logger.error("AnnotationMetadata对象数据是："+JSONArray.toJSONString(importingClassMetadata));
+	  return importingClassMetadata.getClassName() + "#" + MapperScannerRegistrar.class.getSimpleName() + "#" + index;
   }
 
   /**
