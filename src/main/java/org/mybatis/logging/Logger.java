@@ -55,5 +55,13 @@ public class Logger {
       log.trace(s.get());
     }
   }
+  /**
+ *   @Desc 方便打印日志，这个方法自己添加的，源码中并没有这个方法
+ *   @author shenhufei
+ *   @Date 2019年12月1日
+ */
+public void error(String s) {
+	    log.error(s);
+	  }
 
 }

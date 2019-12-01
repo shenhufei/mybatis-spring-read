@@ -71,7 +71,7 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
 /**
  * spring的后置处理器，调用这个方法，ImportBeanDefinitionRegistrar 接口的实现类；
  * 来把mybatis的框架的对象生命周期进行管理
- * 把mybatis的对象组装成 BeanDefinition 对象，存储在BeanDefinitionMap集合中
+ * 把mybatis的对象组装成 RootBeanDefinition 对象，存储在BeanDefinitionMap集合中
  * @date 2019年11月29日  
  * @version 1.0  
  * @author shenhufei
