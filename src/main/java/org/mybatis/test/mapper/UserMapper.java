@@ -17,7 +17,7 @@ package org.mybatis.test.mapper;
 
 import java.util.List;
 
-import org.mybatis.test.User;
+import org.mybatis.test.pojo.User;
 
 public interface UserMapper {
        public User selectUser(Long id);

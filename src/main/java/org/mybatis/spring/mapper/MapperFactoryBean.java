@@ -19,7 +19,10 @@ import static org.springframework.util.Assert.notNull;
 
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.Configuration;
+import org.mybatis.logging.Logger;
+import org.mybatis.logging.LoggerFactory;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.mybatis.spring.annotation.MapperScannerRegistrar;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -51,17 +54,26 @@ import org.springframework.beans.factory.FactoryBean;
  *
  * @see SqlSessionTemplate
  */
+/**  
+ * @Description: 实现 FactoryBean 接口，在初始化的时候，去加载对应的mapper接口，
+ * @author shenhufei
+ * @date 2019年12月3日  
+ * @version 1.0  
+ */
 public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements FactoryBean<T> {
-
+  private static final Logger logger = LoggerFactory.getLogger(MapperScannerRegistrar.class);
+		
   private Class<T> mapperInterface;
 
   private boolean addToConfig = true;
 
   public MapperFactoryBean() {
-    // intentionally empty
+	// intentionally empty
+		  logger.error("MapperFactoryBean对象的无参构造方法执行了");
   }
 
   public MapperFactoryBean(Class<T> mapperInterface) {
+	logger.error("MapperFactoryBean对象的有参构造方法执行了");
     this.mapperInterface = mapperInterface;
   }
 
@@ -73,8 +85,9 @@ public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements Factor
     super.checkDaoConfig();
 
     notNull(this.mapperInterface, "Property 'mapperInterface' is required");
-
     Configuration configuration = getSqlSession().getConfiguration();
+    logger.error("configuration数据是："+configuration);
+    //Configuration 配置文件对象那个，在添加 Mapper接口之前需要做存在性校验
     if (this.addToConfig && !configuration.hasMapper(this.mapperInterface)) {
       try {
         configuration.addMapper(this.mapperInterface);

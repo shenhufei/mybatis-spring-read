@@ -465,7 +465,11 @@ public class SqlSessionFactoryBean
   /**
    * {@inheritDoc}
    */
-  @Override
+  
+  /*
+   * 该类是spring启动之后执行的方法 ，在执行下面代码之前，spring已经完后了对myabatis相关的对象的生成bean对象的操作
+ */
+@Override
   public void afterPropertiesSet() throws Exception {
     notNull(dataSource, "Property 'dataSource' is required");
     notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
@@ -504,6 +508,7 @@ public class SqlSessionFactoryBean
     } else {
       LOGGER.debug(
           () -> "Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
+      //初始化 Configuration 对象的一些固定化的配置
       targetConfiguration = new Configuration();
       Optional.ofNullable(this.configurationProperties).ifPresent(targetConfiguration::setVariables);
     }
@@ -574,7 +579,7 @@ public class SqlSessionFactoryBean
         ErrorContext.instance().reset();
       }
     }
-
+    //设置  Environment 对象 
     targetConfiguration.setEnvironment(new Environment(this.environment,
         this.transactionFactory == null ? new SpringManagedTransactionFactory() : this.transactionFactory,
         this.dataSource));

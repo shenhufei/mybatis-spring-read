@@ -1,4 +1,4 @@
-package org.mybatis.test;
+package org.mybatis.test.pojo;
 
 public class User {
 	private Long id ;

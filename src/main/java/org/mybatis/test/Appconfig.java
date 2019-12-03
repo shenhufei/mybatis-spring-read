@@ -15,28 +15,22 @@ import org.springframework.stereotype.Component;
 @MapperScan("org.mybatis.test.mapper")
 @Configuration
 public class Appconfig {
-	
-	 
-		@Bean("name")
-		public SqlSessionFactoryBean   sqlSessionFactoryBean(DataSource dataSource){
-			SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
-			bean.setDataSource(dataSource);
-			return bean;
-		}
-		
-		@Bean
-		public DataSource dataSource(){
-			DriverManagerDataSource  drive = new  DriverManagerDataSource();
-			drive.setDriverClassName("com.mysql.jdbc.Driver");
-			drive.setUrl("jdbc:mysql://cdb-ewlmquzk.bj.tencentcdb.com:10191/data_shf");
-			drive.setUsername("root");
-			drive.setPassword("shenhufei_");
-			return drive;
-		}
-	
-	
-	
-	
-	
-	
+
+	@Bean("sqlSessionFactoryBean")
+	public SqlSessionFactoryBean sqlSessionFactoryBean(DataSource dataSource) {
+		SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
+		bean.setDataSource(dataSource);
+		return bean;
+	}
+
+	@Bean("dataSource")
+	public DataSource dataSource() {
+		DriverManagerDataSource drive = new DriverManagerDataSource();
+		drive.setDriverClassName("com.mysql.jdbc.Driver");
+		drive.setUrl("jdbc:mysql://cdb-ewlmquzk.bj.tencentcdb.com:10191/data_shf");
+		drive.setUsername("root");
+		drive.setPassword("shenhufei_");
+		return drive;
+	}
+
 }

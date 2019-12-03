@@ -21,8 +21,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.sql.DataSource;
+
 import org.mybatis.logging.Logger;
 import org.mybatis.logging.LoggerFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.mapper.ClassPathMapperScanner;
 import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
@@ -31,6 +34,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.context.ResourceLoaderAware;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.io.ResourceLoader;
@@ -76,12 +80,33 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
  * @version 1.0  
  * @author shenhufei
  */
+/* invokeBeanFactoryPostProcessors(beanFactory);spring的后置处理器会调用这个方法，把mybatis的对象组装成RootBeanDefinition
+ * spring的后置处理器作用：
+ *  在spring 的环境中去执行已经被注册的后置处理器
+	后置处理器分为：1.spring项目中自己的处理器；2.程序自定义的后置处器
+	 后置处理器的作用是：1.将spring的扫描类扫描之后扫描指定包下的加了注解的类，将所有符合spring规范的类都扫描出来）将类的各种属性都存储在RootBeanDefinition对象中，处理处理各种@Import//Resources ，@Import @Mapper 注解;2.1执行源码中实现这个类的
+	BeanFactoryPostProcessor接口的类，2.2执行自定义的实现
+	BeanFactoryPostProcessor接口的类，也就是认为去干涉spring的初始化过程//也就是可以修改bean对象的各种属性
+			
+ * 
+ *
+ */
 @Override
   public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-    //拿到各种方式将对象给spring管理的配置项，
+	/*AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
+	DataSource dataSource = ac.getBean(DataSource.class);
+	SqlSessionFactoryBean sqlSessionFactoryBean = ac.getBean(SqlSessionFactoryBean.class);
+	logger.error("DataSource:"+JSONArray.toJSONString(dataSource));
+	logger.error("SqlSessionFactoryBean:"+JSONArray.toJSONString(sqlSessionFactoryBean));*/
+	//以上流程，是有问题的，根本就获取不到bean对象，因为spring还没有初始化完成；
+	//拿到各种方式将对象给spring管理的配置项，
+	
 	AnnotationAttributes mapperScanAttrs = AnnotationAttributes
         .fromMap(importingClassMetadata.getAnnotationAttributes(MapperScan.class.getName()));
 	logger.error("mapperScanAttrs对象数据是："+JSONArray.toJSONString(mapperScanAttrs));
+	logger.error("importingClassMetadata对象数据是(Appconfig这个配置类的基础信息)："+JSONArray.toJSONString(importingClassMetadata));
+	//registry 对象中包含了当前电脑，开发环境的所有基本信息；需要初始化的类：（mybatis自己的类，以及整合之后产生的中间类）
+	logger.error("registry对象数据是："+JSONArray.toJSONString(registry));
     if (mapperScanAttrs != null) {
     //再根据具体的配置项，去进行存储在BeanDefinitionMap集合中的操作
       registerBeanDefinitions(mapperScanAttrs, registry, generateBaseBeanName(importingClassMetadata, 0));
@@ -89,10 +114,10 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
   }
 
   void registerBeanDefinitions(AnnotationAttributes annoAttrs, BeanDefinitionRegistry registry, String beanName) {
-
+	//建造者模式获取  BeanDefinitionBuilder 用于之后构建每个 mapper接口的 对应RootBeanDefinition 对象
     BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(MapperScannerConfigurer.class);
     builder.addPropertyValue("processPropertyPlaceHolders", true);
-
+    //拿到了AnnotationAttributes 中的数据进行相关的配置操作；
     Class<? extends Annotation> annotationClass = annoAttrs.getClass("annotationClass");
     if (!Annotation.class.equals(annotationClass)) {
       builder.addPropertyValue("annotationClass", annotationClass);
@@ -122,7 +147,9 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
     if (StringUtils.hasText(sqlSessionFactoryRef)) {
       builder.addPropertyValue("sqlSessionFactoryBeanName", annoAttrs.getString("sqlSessionFactoryRef"));
     }
-
+    
+    //以下三个配置项的获取，说明了，mybatis-spring的时候，注册bean对象有三种方式； value；basePackages；basePackageClasses
+    //basePackages 集合就是把所有的需要给spring管理的对象 都放在一个集合中；
     List<String> basePackages = new ArrayList<>();
     basePackages.addAll(
         Arrays.stream(annoAttrs.getStringArray("value")).filter(StringUtils::hasText).collect(Collectors.toList()));
@@ -132,7 +159,8 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
 
     basePackages.addAll(Arrays.stream(annoAttrs.getClassArray("basePackageClasses")).map(ClassUtils::getPackageName)
         .collect(Collectors.toList()));
-
+    
+    //大概就是获取哪些是懒加载的类
     String lazyInitialization = annoAttrs.getString("lazyInitialization");
     if (StringUtils.hasText(lazyInitialization)) {
       builder.addPropertyValue("lazyInitialization", lazyInitialization);

@@ -2,8 +2,8 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.apache.ibatis.Amy.UserMapper">
-  <select id="selectUser" resultType="org.apache.ibatis.Amy.User"  parameterType="java.lang.Long" >
+<mapper namespace="org.mybatis.test.mapper.UserMapper">
+  <select id="selectUser" resultType="org.mybatis.test.pojo.User"  parameterType="java.lang.Long" >
     select * from user where id = #{id}
   </select>
   <update id ="update"  parameterType="java.lang.String"  >
@@ -12,7 +12,7 @@
   
   
   
-  <select id="selectAll" resultType="org.apache.ibatis.Amy.User"  >
+  <select id="selectAll" resultType="org.mybatis.test.pojo.User"  >
     select * from user 
   </select>
 </mapper>

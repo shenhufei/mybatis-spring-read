@@ -19,8 +19,12 @@ import static org.springframework.util.Assert.notNull;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.logging.Logger;
+import org.mybatis.logging.LoggerFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.dao.support.DaoSupport;
+
+import com.alibaba.fastjson.JSONArray;
 
 /**
  * Convenient super class for MyBatis SqlSession data access objects. It gives you access to the template which can then
@@ -37,6 +41,7 @@ import org.springframework.dao.support.DaoSupport;
  * @see SqlSessionTemplate
  */
 public abstract class SqlSessionDaoSupport extends DaoSupport {
+  private static final Logger logger = LoggerFactory.getLogger(SqlSessionDaoSupport.class);
 
   private SqlSessionTemplate sqlSessionTemplate;
 
@@ -47,7 +52,16 @@ public abstract class SqlSessionDaoSupport extends DaoSupport {
    * @param sqlSessionFactory
    *          a factory of SqlSession
    */
-  public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+  /**
+   * 源码中的类会调用这个方法，初始化一些配置信息
+ * @date 2019年12月3日 
+ * @param 
+ * @return
+ * @author shenhufei
+ */
+public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+	//logger.error("sqlSessionFactory对象的数据是："+JSONArray.toJSONString(sqlSessionFactory));
+	//logger.error("sqlSessionFactory对象的数据是："+JSONArray.toJSONString(sqlSessionTemplate));
     if (this.sqlSessionTemplate == null || sqlSessionFactory != this.sqlSessionTemplate.getSqlSessionFactory()) {
       this.sqlSessionTemplate = createSqlSessionTemplate(sqlSessionFactory);
     }
