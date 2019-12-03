@@ -30,6 +30,7 @@ public class Appconfig {
 		drive.setUrl("jdbc:mysql://cdb-ewlmquzk.bj.tencentcdb.com:10191/data_shf");
 		drive.setUsername("root");
 		drive.setPassword("shenhufei_");
+		
 		return drive;
 	}
 

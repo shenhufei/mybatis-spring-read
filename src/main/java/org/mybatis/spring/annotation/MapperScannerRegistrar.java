@@ -21,11 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.sql.DataSource;
-
 import org.mybatis.logging.Logger;
 import org.mybatis.logging.LoggerFactory;
-import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.mapper.ClassPathMapperScanner;
 import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
@@ -34,7 +31,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.context.ResourceLoaderAware;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.io.ResourceLoader;
@@ -58,7 +54,7 @@ import com.alibaba.fastjson.JSONArray;
  * @since 1.2.0
  */
 public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware {
-	 private static final Logger logger = LoggerFactory.getLogger(MapperScannerRegistrar.class);
+  private static final Logger logger = LoggerFactory.getLogger(MapperScannerRegistrar.class);
 	    
   /**
    * {@inheritDoc}

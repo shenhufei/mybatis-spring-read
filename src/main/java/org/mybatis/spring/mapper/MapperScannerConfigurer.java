@@ -22,7 +22,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.logging.Logger;
+import org.mybatis.logging.LoggerFactory;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.mybatis.spring.annotation.MapperScannerRegistrar;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanNameAware;
@@ -40,6 +43,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
+
+import com.alibaba.fastjson.JSONArray;
 
 /**
  * BeanDefinitionRegistryPostProcessor that searches recursively starting from a base package for interfaces and
@@ -90,7 +95,8 @@ import org.springframework.util.StringUtils;
  */
 public class MapperScannerConfigurer
     implements BeanDefinitionRegistryPostProcessor, InitializingBean, ApplicationContextAware, BeanNameAware {
-
+  private static final Logger logger = LoggerFactory.getLogger(MapperScannerConfigurer.class);
+	
   private String basePackage;
 
   private boolean addToConfig = true;
@@ -332,8 +338,13 @@ public class MapperScannerConfigurer
    * 
    * @since 1.0.2
    */
-  @Override
+  /* spring 源码中的 ConfigurationClassBeanDefinitionReader 类
+   * 调用如下 loadBeanDefinitionsFromRegistrars  方法，回去扫描需要交给需要交给spring去管理的第三方的 对象； 
+   * 
+ */
+@Override
   public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
+	logger.error("BeanDefinitionRegistry对象的数据是："+JSONArray.toJSONString(registry));
     if (this.processPropertyPlaceHolders) {
       processPropertyPlaceHolders();
     }
